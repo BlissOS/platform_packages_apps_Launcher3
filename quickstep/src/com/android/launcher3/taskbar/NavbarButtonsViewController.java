@@ -683,9 +683,9 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
         if (mFloatingRotationButton != null) {
             mFloatingRotationButton.onConfigurationChanged(configChanges);
         }
-        //if (!mContext.isUserSetupComplete()) {
-        //    handleSetupUi();
-        //}
+        if (!mContext.isUserSetupComplete()) {
+            handleSetupUi();
+        }
         updateButtonLayoutSpacing();
     }
 
