@@ -71,7 +71,6 @@ import androidx.annotation.UiThread;
 
 import com.android.app.viewcapture.SettingsAwareViewCapture;
 import com.android.launcher3.BaseDraggingActivity;
-import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
@@ -808,18 +807,12 @@ public class TouchInteractionService extends Service
 
             // If Taskbar is present, we listen for long press to unstash it.
             TaskbarActivityContext tac = mTaskbarManager.getCurrentActivityContext();
-            if (tac != null) {
-                // Present always on large screen or on small screen w/ flag
-                DeviceProfile dp = tac.getDeviceProfile();
-                boolean useTaskbarConsumer = dp.isTaskbarPresent && !TaskbarManager.isPhoneMode(dp);
-                if (canStartSystemGesture && useTaskbarConsumer) {
-                    reasonString.append(NEWLINE_PREFIX)
-                            .append(reasonPrefix)
-                            .append(SUBSTRING_PREFIX)
-                            .append("TaskbarActivityContext != null, "
-                                    + "using TaskbarStashInputConsumer");
-                    base = new TaskbarStashInputConsumer(this, base, mInputMonitorCompat, tac);
-                }
+            if (tac != null && canStartSystemGesture) {
+                reasonString.append(NEWLINE_PREFIX)
+                        .append(reasonPrefix)
+                        .append(SUBSTRING_PREFIX)
+                        .append("TaskbarActivityContext != null, using TaskbarStashInputConsumer");
+                base = new TaskbarStashInputConsumer(this, base, mInputMonitorCompat, tac);
             }
 
             if (mDeviceState.isBubblesExpanded()) {

@@ -16,13 +16,11 @@
 
 package com.android.launcher3.taskbar
 
-import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import com.android.launcher3.DeviceProfile
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.android.launcher3.Utilities.mapRange
@@ -62,7 +60,7 @@ class TaskbarBackgroundRenderer(context: TaskbarActivityContext) {
     private val invertedLeftCornerPath: Path = Path()
     private val invertedRightCornerPath: Path = Path()
 
-    private var stashedHandleWidth =
+    private val stashedHandleWidth =
         context.resources.getDimensionPixelSize(R.dimen.taskbar_stashed_handle_width)
 
     private val stashedHandleHeight =
@@ -85,13 +83,6 @@ class TaskbarBackgroundRenderer(context: TaskbarActivityContext) {
             else LIGHT_THEME_SHADOW_ALPHA
 
         setCornerRoundness(DEFAULT_ROUNDNESS)
-    }
-
-    fun updateStashedHandleWidth(dp: DeviceProfile, res: Resources) {
-        stashedHandleWidth = res.getDimensionPixelSize(
-                if (TaskbarManager.isPhoneMode(dp)) R.dimen.taskbar_stashed_small_screen
-                else R.dimen.taskbar_stashed_handle_width
-        )
     }
 
     /**

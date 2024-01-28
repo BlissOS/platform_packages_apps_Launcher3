@@ -185,8 +185,7 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
         mRightCorner = display.getRoundedCorner(RoundedCorner.POSITION_BOTTOM_RIGHT);
 
         // Inflate views.
-        boolean phoneMode = TaskbarManager.isPhoneMode(mDeviceProfile);
-        int taskbarLayout = DisplayController.isTransientTaskbar(this) && !phoneMode
+        int taskbarLayout = DisplayController.isTransientTaskbar(this)
                 ? R.layout.transient_taskbar
                 : R.layout.taskbar;
         mDragLayer = (TaskbarDragLayer) mLayoutInflater.inflate(taskbarLayout, null, false);
@@ -255,12 +254,6 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
                 sharedState.systemBarAttrsBehavior);
         onNavButtonsDarkIntensityChanged(sharedState.navButtonsDarkIntensity);
 
-        if (FLAG_HIDE_NAVBAR_WINDOW) {
-            // W/ the flag not set this entire class gets re-created, which resets the value of
-            // mIsDestroyed. We re-use the class for small-screen, so we explicitly have to mark
-            // this class as non-destroyed
-            mIsDestroyed = false;
-        }
 
         if (!mAddedWindow) {
             mWindowManager.addView(mDragLayer, mWindowLayoutParams);
@@ -341,7 +334,7 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
     public WindowManager.LayoutParams createDefaultWindowLayoutParams(int type, String title) {
         DeviceProfile deviceProfile = getDeviceProfile();
         // Taskbar is on the logical bottom of the screen
-        boolean isVerticalBarLayout = TaskbarManager.isPhoneButtonNavMode(this) &&
+        boolean isVerticalBarLayout = TaskbarManager.isPhoneMode(deviceProfile) &&
                 deviceProfile.isLandscape;
 
         int windowFlags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
