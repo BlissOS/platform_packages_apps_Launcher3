@@ -76,6 +76,7 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.WindowConfiguration;
 import android.content.Context;
 import android.content.Intent;
@@ -4004,13 +4005,15 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
      * If actions are showing, we only show split option if
      * * Device is large screen
      * * There are at least 2 tasks to invoke split
+     * Unconditionally hide split option for Go-enabled targets
      */
     private void updateCurrentTaskActionsVisibility() {
         boolean isCurrentSplit = getCurrentPageTaskView() instanceof GroupedTaskView;
         mActionsView.updateHiddenFlags(HIDDEN_SPLIT_SCREEN, isCurrentSplit);
         mActionsView.updateHiddenFlags(HIDDEN_SPLIT_SELECT_ACTIVE, isSplitSelectionActive());
         mActionsView.updateSplitButtonHiddenFlags(FLAG_IS_NOT_TABLET,
-                !mActivity.getDeviceProfile().isTablet);
+                !mActivity.getDeviceProfile().isTablet ||
+                getContext().getSystemService(ActivityManager.class).isLowRamDevice());
         mActionsView.updateSplitButtonDisabledFlags(FLAG_SINGLE_TASK, /*enable=*/ false);
         if (DESKTOP_MODE_SUPPORTED) {
             boolean isCurrentDesktop = getCurrentPageTaskView() instanceof DesktopTaskView;
@@ -4865,6 +4868,7 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
 
         FloatingTaskView firstFloatingTaskView =
                 mSplitSelectStateController.getFirstFloatingTaskView();
+        if (firstFloatingTaskView == null) return false;
         firstFloatingTaskView.getBoundsOnScreen(firstTaskStartingBounds);
         firstFloatingTaskView.addConfirmAnimation(pendingAnimation,
                 new RectF(firstTaskStartingBounds), firstTaskEndingBounds,
@@ -5007,6 +5011,7 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
         mTempRectF.set(mTempRect);
         FloatingTaskView firstFloatingTaskView =
                 mSplitSelectStateController.getFirstFloatingTaskView();
+        if (firstFloatingTaskView != null) return;
         firstFloatingTaskView.updateOrientationHandler(mOrientationHandler);
         firstFloatingTaskView.update(mTempRectF, /*progress=*/1f);
 
