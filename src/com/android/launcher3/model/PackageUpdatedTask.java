@@ -190,11 +190,6 @@ public class PackageUpdatedTask implements ModelUpdateTask {
                 flagOp = FlagOp.NO_OP.setFlag(
                         WorkspaceItemInfo.FLAG_DISABLED_SUSPENDED, mOp == OP_SUSPEND);
                 appsList.updateDisabledFlags(matcher, flagOp);
-                for (int i = 0; i < packageCount; i++) {
-                    if (isTargetPackage(packages[i])) {
-                        needsRestart = true;
-                    }
-                }
                 break;
             case OP_USER_AVAILABILITY_CHANGE: {
                 UserManagerState ums = new UserManagerState();
