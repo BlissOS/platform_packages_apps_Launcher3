@@ -71,6 +71,8 @@ import com.android.launcher3.util.ResourceHelper;
 import com.android.launcher3.util.WindowBounds;
 import com.android.launcher3.util.window.WindowManagerProxy;
 
+import android.provider.Settings;
+
 import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -78,7 +80,6 @@ import java.util.function.Consumer;
 @SuppressLint("NewApi")
 public class DeviceProfile {
 
-    public static final String KEY_PHONE_TASKBAR = "pref_allow_phone_taskbar";
     public static final String KEY_ROW_HEIGHT = "pref_row_height";
 
     private static final int DEFAULT_DOT_SIZE = 100;
@@ -421,7 +422,7 @@ public class DeviceProfile {
                 && inv.workspaceCellSpecsId != INVALID_RESOURCE_HANDLE
                 && inv.allAppsCellSpecsId != INVALID_RESOURCE_HANDLE;
 
-        SharedPreferences prefs = LauncherPrefs.getPrefs(context);
+	    SharedPreferences prefs = LauncherPrefs.getPrefs(context);
 
         mIsScalableGrid = inv.isScalable && !isVerticalBarLayout() && !isMultiWindowMode;
         // Determine device posture.
@@ -429,9 +430,9 @@ public class DeviceProfile {
         isTablet = info.isTablet(windowBounds);
         isPhone = !isTablet;
         isTwoPanels = isTablet && isMultiDisplay;
-        boolean isTaskBarEnabled = prefs.getBoolean(KEY_PHONE_TASKBAR, isTablet ||
-                (enableTinyTaskbar() && isGestureMode));
-        isTaskbarPresent = isTaskBarEnabled
+        boolean isTaskBarEnabled = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.ENABLE_TASKBAR, isTablet ? 1 : 0) == 1;
+        isTaskbarPresent = (isTaskBarEnabled || (enableTinyTaskbar() && isGestureMode))
                 && WindowManagerProxy.INSTANCE.get(context).isTaskbarDrawnInProcess();
 
         // Some more constants.
